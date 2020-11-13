@@ -7,3 +7,16 @@
 pclone is small project designed to clone running processes. The cloning does not clone threads nor handles, it does however clone all virtual memory. 
 It does this by swapping dirbase in the clones EPROCESS structure. It also swaps the PEB in the EPROCESS structure so the clone will list the same loaded modules
 as the cloned process.
+
+# Usage
+
+To make a `pclone_ctx` you must create a `vdm_ctx` and you must have a process id you want to clone. Once you have both of those you can clone a process.
+
+```cpp
+pclone_ctx clone_ctx(vdm, util::get_pid("notepad.exe"));
+
+// clone_pid is the pid of the new clone process
+// clone_handle is a PROCESS_ALL_ACCESS handle which you can
+// use to call VirtualAllocEx, ReadProcessMemory, WriteProcessMemory... etc...
+const auto [clone_pid, clone_handle] = clone_ctx.clone();
+```
