@@ -20,3 +20,10 @@ pclone_ctx clone_ctx(vdm, util::get_pid("notepad.exe"));
 // use to call VirtualAllocEx, ReadProcessMemory, WriteProcessMemory... etc...
 const auto [clone_pid, clone_handle] = clone_ctx.clone();
 ```
+
+# Example
+
+As you can see here I clone notepad using a `RuntimeBroker.exe` as a dummy process to use as the clone. The loaded modules list the ones in notepad.exe and all the virtual memory is the same
+as it is in notepad.exe
+
+<img src="https://imgur.com/XDADPMA.png"/>
