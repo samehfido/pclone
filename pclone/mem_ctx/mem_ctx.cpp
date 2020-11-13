@@ -73,13 +73,6 @@ namespace nasa
 		this->new_pt.first = reinterpret_cast<ppte>(new_pt_entries.pt.second.pfn << 12);
 	}
 
-	mem_ctx::~mem_ctx()
-	{
-		const auto pml4 =
-			reinterpret_cast<ppml4e>(
-				set_page(dirbase))[pml4e_index] = pml4e{ NULL };
-	}
-
 	void* mem_ctx::set_page(void* addr)
 	{
 		// table entry change.

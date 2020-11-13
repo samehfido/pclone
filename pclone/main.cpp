@@ -55,15 +55,15 @@ int __cdecl main(int argc, char** argv)
 	vdm.set_read(_read_phys);
 	vdm.set_write(_write_phys);
 
-	nasa::mem_ctx notepad_proc(vdm, std::atoi(argv[2]));
-	nasa::pclone_ctx clone_notepad(&notepad_proc);
-	const auto [clone_pid, clone_handle] = clone_notepad.clone();
+	nasa::mem_ctx target_proc(vdm, std::atoi(argv[2]));
+	nasa::pclone_ctx clone_ctx(&target_proc);
+	const auto [clone_pid, clone_handle] = clone_ctx.clone();
 
 	unsigned short mz = 0u;
 	std::size_t bytes_read;
 	ReadProcessMemory(clone_handle, GetModuleHandleA("ntdll.dll"), &mz, sizeof mz, &bytes_read);
 
 	std::printf("[+] handle -> 0x%x, clone pid -> 0x%x\n", clone_handle, clone_pid);
-	std::printf("[+] notepad mz -> 0x%x\n", mz);
+	std::printf("[+] ntdll mz in clone -> 0x%x\n", mz);
 	std::getchar();
 }

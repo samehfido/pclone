@@ -9,8 +9,6 @@ namespace nasa
 		friend class pclone_ctx;
 	public:
 		mem_ctx(vdm::vdm_ctx& v_ctx, std::uint32_t pid = GetCurrentProcessId());
-		~mem_ctx();
-
 		std::pair<ppte, pte> get_pte(void* addr, bool use_hyperspace = false);
 		void set_pte(void* addr, const ::pte& pte, bool use_hyperspace = false);
 
