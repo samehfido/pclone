@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="https://githacks.org/_xeroxz/pclone/-/raw/78ec8745ad117f42640063ef3bd10e5946f7ad6d/img/pclone-icon.png"/>
+</div>
+
 # pclone (Process Cloning)
 
 pclone is small project designed to clone running processes. The cloning does not clone threads nor handles, it does however clone all virtual memory. 
