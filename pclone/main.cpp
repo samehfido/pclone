@@ -1,6 +1,7 @@
 #include "vdm_ctx/vdm_ctx.hpp"
 #include "mem_ctx/mem_ctx.hpp"
 #include "pclone_ctx/pclone_ctx.hpp"
+#include "set_mgr/set_mgr.hpp"
 
 int __cdecl main(int argc, char** argv)
 {
@@ -33,6 +34,12 @@ int __cdecl main(int argc, char** argv)
 
 	vdm::vdm_ctx vdm(_read_phys, _write_phys);
 	nasa::mem_ctx my_proc(vdm);
+
+	const auto set_mgr_pethread = set_mgr::get_setmgr_pethread(vdm);
+	const auto result = set_mgr::stop_setmgr(vdm, set_mgr_pethread);
+
+	std::printf("[+] set manager pethread -> 0x%p\n", set_mgr_pethread);
+	std::printf("[+] result -> 0x%x\n", result);
 
 	// read physical memory via paging tables and not with the driver...
 	_read_phys = [&my_proc](void* addr, void* buffer, std::size_t size) -> bool

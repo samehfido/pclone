@@ -320,4 +320,54 @@ namespace util
 		}
 		return NULL;
 	}
+
+	namespace memory
+	{
+		template<std::size_t pattern_length>
+		__forceinline auto sig_scan(const char(&signature)[pattern_length], const char(&mask)[pattern_length]) -> std::pair<std::uintptr_t, std::uint32_t>
+		{
+			static const auto ntoskrnl_module =
+				LoadLibraryEx(
+					"ntoskrnl.exe",
+					NULL,
+					DONT_RESOLVE_DLL_REFERENCES
+				);
+
+			static const auto p_idh = reinterpret_cast<PIMAGE_DOS_HEADER>(ntoskrnl_module);
+			if (p_idh->e_magic != IMAGE_DOS_SIGNATURE)
+				return { {}, {} };
+
+			static const auto p_inh = reinterpret_cast<PIMAGE_NT_HEADERS>((LPBYTE)ntoskrnl_module + p_idh->e_lfanew);
+			if (p_inh->Signature != IMAGE_NT_SIGNATURE)
+				return { {}, {} };
+
+			const auto pattern_view =
+				std::string_view
+			{
+				reinterpret_cast<char*>(ntoskrnl_module),
+				p_inh->OptionalHeader.SizeOfImage
+			};
+
+			std::array<std::pair<char, char>, pattern_length - 1> pattern{};
+			for (std::size_t index = 0; index < pattern_length - 1; index++)
+				pattern[index] = { signature[index], mask[index] };
+
+			auto resultant_address = std::search
+			(
+				pattern_view.cbegin(),
+				pattern_view.cend(),
+				pattern.cbegin(),
+				pattern.cend(),
+				[](char left, std::pair<char, char> right) -> bool {
+					return (right.second == '?' || left == right.first);
+				});
+
+			const auto found_address =
+				resultant_address == pattern_view.cend() ? 0 :
+				reinterpret_cast<std::uintptr_t>(resultant_address.operator->());
+
+			const auto rva = found_address - reinterpret_cast<std::uintptr_t>(ntoskrnl_module);
+			return { found_address, rva };
+		}
+	}
 }
