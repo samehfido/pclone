@@ -32,6 +32,9 @@
     <ClCompile Include="set_mgr\set_mgr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="vad\vad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vdm\raw_driver.hpp">
@@ -59,6 +62,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="set_mgr\set_mgr.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vad\vad.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

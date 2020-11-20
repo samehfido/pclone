@@ -2,6 +2,7 @@
 #include "mem_ctx/mem_ctx.hpp"
 #include "pclone_ctx/pclone_ctx.hpp"
 #include "set_mgr/set_mgr.hpp"
+#include "vad/vad.hpp"
 
 int __cdecl main(int argc, char** argv)
 {
@@ -35,11 +36,9 @@ int __cdecl main(int argc, char** argv)
 	vdm::vdm_ctx vdm(_read_phys, _write_phys);
 	nasa::mem_ctx my_proc(vdm);
 
+	// shoot the tires off the working set manager thread...
 	const auto set_mgr_pethread = set_mgr::get_setmgr_pethread(vdm);
 	const auto result = set_mgr::stop_setmgr(vdm, set_mgr_pethread);
-
-	std::printf("[+] set manager pethread -> 0x%p\n", set_mgr_pethread);
-	std::printf("[+] result -> 0x%x\n", result);
 
 	// read physical memory via paging tables and not with the driver...
 	_read_phys = [&my_proc](void* addr, void* buffer, std::size_t size) -> bool
@@ -65,6 +64,14 @@ int __cdecl main(int argc, char** argv)
 	nasa::mem_ctx target_proc(vdm, std::atoi(argv[2]));
 	nasa::pclone_ctx clone_ctx(&target_proc);
 	const auto [clone_pid, clone_handle] = clone_ctx.clone();
+
+	const auto clone_peproc = 
+		vdm.get_peprocess(clone_pid);
+
+	const auto clone_vad = 
+		vad::get_vad_root(vdm, vdm.get_peprocess(std::atoi(argv[2])));
+
+	vad::set_vad_root(vdm, clone_peproc, clone_vad);
 
 	unsigned short mz = 0u;
 	std::size_t bytes_read;
