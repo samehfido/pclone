@@ -2,7 +2,7 @@
 
 namespace nasa
 {
-	pclone_ctx::pclone_ctx(mem_ctx* clone_ctx)
+	pclone_ctx::pclone_ctx(ptm::ptm_ctx* clone_ctx)
 		:
 		clone_target_ctx(clone_ctx)
 	{}
@@ -43,7 +43,7 @@ namespace nasa
 		// cloned...
 		const auto clone_target_peproc =
 			reinterpret_cast<std::uintptr_t>(
-				v_ctx->get_peprocess(clone_target_ctx->get_pid()));
+				v_ctx->get_peprocess(clone_target_ctx->pid));
 
 		const auto clone_target_dirbase = 
 			v_ctx->rkm<pte>(clone_target_peproc + 0x28);

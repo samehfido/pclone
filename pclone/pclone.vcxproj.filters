@@ -23,9 +23,6 @@
     <ClCompile Include="vdm_ctx\vdm_ctx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mem_ctx\mem_ctx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pclone_ctx\pclone_ctx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,6 +30,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="vad\vad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ptm_ctx\ptm_ctx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -55,9 +55,6 @@
     <ClInclude Include="util\util.hpp">
       <Filter>Header Files\util</Filter>
     </ClInclude>
-    <ClInclude Include="mem_ctx\mem_ctx.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pclone_ctx\pclone_ctx.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -65,6 +62,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vad\vad.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ptm_ctx\ptm_ctx.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

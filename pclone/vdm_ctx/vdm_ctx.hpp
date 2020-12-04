@@ -26,14 +26,9 @@ namespace vdm
 	class vdm_ctx
 	{
 	public:
-		vdm_ctx
-		(	
-			std::function<decltype(vdm::read_phys)>& read_func,
-			std::function<decltype(vdm::write_phys)>& write_func
-		);
-
-		void set_read(std::function<decltype(vdm::read_phys)>& read_func);
-		void set_write(std::function<decltype(vdm::write_phys)>& write_func);
+		explicit vdm_ctx(read_phys_t& read_func, write_phys_t& write_func);
+		void set_read(read_phys_t& read_func);
+		void set_write(write_phys_t& write_func);
 
 		template <class T, class ... Ts>
 		__forceinline std::invoke_result_t<T, Ts...> syscall(void* addr, Ts ... args) const
@@ -83,12 +78,12 @@ namespace vdm
 		}
 
 		template <class T>
-		__forceinline void wkm(std::uintptr_t addr, const T& value)
+		__forceinline auto wkm(std::uintptr_t addr, const T& value) -> bool
 		{
 			static const auto ntoskrnl_memcpy =
 				util::get_kmodule_export("ntoskrnl.exe", "memcpy");
 
-			this->syscall<decltype(&memcpy)>(
+			return this->syscall<decltype(&memcpy)>(
 				ntoskrnl_memcpy, (void*)addr, &value, sizeof T);
 		}
 

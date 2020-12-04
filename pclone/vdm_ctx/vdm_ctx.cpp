@@ -2,11 +2,7 @@
 
 namespace vdm
 {
-	vdm_ctx::vdm_ctx
-	(
-		std::function<decltype(vdm::read_phys)>& read_func, 
-		std::function<decltype(vdm::write_phys)>& write_func
-	)
+	vdm_ctx::vdm_ctx(read_phys_t& read_func, write_phys_t& write_func)
 		:
 		read_phys(read_func),
 		write_phys(write_func)
@@ -41,12 +37,12 @@ namespace vdm
 			search_thread.join();
 	}
 
-	void vdm_ctx::set_read(std::function<decltype(vdm::read_phys)>& read_func)
+	void vdm_ctx::set_read(read_phys_t& read_func)
 	{
 		this->read_phys = read_func;
 	}
 
-	void vdm_ctx::set_write(std::function<decltype(vdm::write_phys)>& write_func)
+	void vdm_ctx::set_write(write_phys_t& write_func)
 	{
 		this->write_phys = write_func;
 	}

@@ -1,5 +1,5 @@
 #include "vdm_ctx/vdm_ctx.hpp"
-#include "mem_ctx/mem_ctx.hpp"
+#include "ptm_ctx/ptm_ctx.hpp"
 #include "pclone_ctx/pclone_ctx.hpp"
 #include "set_mgr/set_mgr.hpp"
 #include "vad/vad.hpp"
@@ -21,33 +21,38 @@ int __cdecl main(int argc, char** argv)
 
 	// read physical memory using the driver...
 	vdm::read_phys_t _read_phys =
-	[&](void* addr, void* buffer, std::size_t size) -> bool
+		[&](void* addr, void* buffer, std::size_t size) -> bool
 	{
 		return vdm::read_phys(addr, buffer, size);
 	};
 
 	// write physical memory using the driver...
 	vdm::write_phys_t _write_phys =
-	[&](void* addr, void* buffer, std::size_t size) -> bool
+		[&](void* addr, void* buffer, std::size_t size) -> bool
 	{
 		return vdm::write_phys(addr, buffer, size);
 	};
 
 	vdm::vdm_ctx vdm(_read_phys, _write_phys);
-	nasa::mem_ctx my_proc(vdm);
+	ptm::ptm_ctx my_proc(&vdm);
 
 	// shoot the tires off the working set manager thread...
-	const auto set_mgr_pethread = set_mgr::get_setmgr_pethread(vdm);
-	const auto result = set_mgr::stop_setmgr(vdm, set_mgr_pethread);
+	const auto set_mgr_pethread = 
+		set_mgr::get_setmgr_pethread(vdm);
+
+	const auto result = 
+		set_mgr::stop_setmgr(vdm, set_mgr_pethread);
 
 	// read physical memory via paging tables and not with the driver...
-	_read_phys = [&my_proc](void* addr, void* buffer, std::size_t size) -> bool
+	_read_phys = 
+		[&my_proc](void* addr, void* buffer, std::size_t size) -> bool
 	{
 		return my_proc.read_phys(buffer, addr, size);
 	};
 
 	// write physical memory via paging tables and not with the driver...
-	_write_phys = [&my_proc](void* addr, void* buffer, std::size_t size) -> bool
+	_write_phys = 
+		[&my_proc](void* addr, void* buffer, std::size_t size) -> bool
 	{
 		return my_proc.write_phys(buffer, addr, size);
 	};
@@ -61,7 +66,7 @@ int __cdecl main(int argc, char** argv)
 	vdm.set_read(_read_phys);
 	vdm.set_write(_write_phys);
 
-	nasa::mem_ctx target_proc(vdm, std::atoi(argv[2]));
+	ptm::ptm_ctx target_proc(&vdm, std::atoi(argv[2]));
 	nasa::pclone_ctx clone_ctx(&target_proc);
 	const auto [clone_pid, clone_handle] = clone_ctx.clone();
 
@@ -69,13 +74,16 @@ int __cdecl main(int argc, char** argv)
 		vdm.get_peprocess(clone_pid);
 
 	const auto clone_vad = 
-		vad::get_vad_root(vdm, vdm.get_peprocess(std::atoi(argv[2])));
+		vad::get_vad_root(vdm, 
+			vdm.get_peprocess(std::atoi(argv[2])));
 
 	vad::set_vad_root(vdm, clone_peproc, clone_vad);
 
 	unsigned short mz = 0u;
 	std::size_t bytes_read;
-	ReadProcessMemory(clone_handle, GetModuleHandleA("ntdll.dll"), &mz, sizeof mz, &bytes_read);
+
+	ReadProcessMemory(clone_handle, 
+		GetModuleHandleA("ntdll.dll"), &mz, sizeof mz, &bytes_read);
 
 	std::printf("[+] handle -> 0x%x, clone pid -> 0x%x\n", clone_handle, clone_pid);
 	std::printf("[+] ntdll mz in clone -> 0x%x\n", mz);
